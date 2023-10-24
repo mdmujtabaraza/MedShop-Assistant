@@ -54,8 +54,11 @@ class GetMedicineByIllnessIntentHandler(AbstractRequestHandler):
         # illness_name = attr.get("UserQuery")
         import string
         from gspread import service_account
+        import nltk
         from nltk.tokenize import word_tokenize
 
+        nltk.data.path.append("/tmp")
+        nltk.download("punkt", download_dir="/tmp")
         gc = service_account(filename='credentials.json')
         sheet_url = "https://docs.google.com/spreadsheets/d/1VueD0dYG1Zn7Ubs0TjVLVzXa58y7wRacVBDZDrit-V4"
         sh = gc.open_by_url(sheet_url)
