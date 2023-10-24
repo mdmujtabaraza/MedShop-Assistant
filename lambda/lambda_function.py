@@ -14,17 +14,11 @@ from ask_sdk_core.handler_input import HandlerInput
 
 from ask_sdk_model import Response
 
-import gspread
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 skill_name = "good doctor"
-
-gc = gspread.service_account(filename='credentials.json')
-sheet_url = "https://docs.google.com/spreadsheets/d/1jooif5zE_rzb4u-U6ChpMLTX-wnxH9NlmIKehttxSBE"
-sh = gc.open_by_url(sheet_url)
-wks = sh.get_worksheet(0)
 
 
 class LaunchRequestHandler(AbstractRequestHandler):
@@ -57,6 +51,13 @@ class GetMedicineByIllnessIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
+        import gspread
+
+        gc = gspread.service_account(filename='credentials.json')
+        sheet_url = "https://docs.google.com/spreadsheets/d/1jooif5zE_rzb4u-U6ChpMLTX-wnxH9NlmIKehttxSBE"
+        sh = gc.open_by_url(sheet_url)
+        wks = sh.get_worksheet(0)
+
         # attr = handler_input.attributes_manager.session_attributes
         # illness_name = attr.get("IllnessName")
         illness_name = handler_input.request_envelope.request.intent.slots["IllnessName"].value
