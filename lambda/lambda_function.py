@@ -14,7 +14,6 @@ from ask_sdk_core.handler_input import HandlerInput
 
 from ask_sdk_model import Response
 
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
@@ -51,29 +50,47 @@ class GetMedicineByIllnessIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        import gspread
+        # attr = handler_input.attributes_manager.session_attributes
+        # illness_name = attr.get("UserQuery")
+        from gspread import service_account
+        from textblob import TextBlob
 
-        gc = gspread.service_account(filename='credentials.json')
-        sheet_url = "https://docs.google.com/spreadsheets/d/1jooif5zE_rzb4u-U6ChpMLTX-wnxH9NlmIKehttxSBE"
+        gc = service_account(filename='credentials.json')
+        sheet_url = "https://docs.google.com/spreadsheets/d/1VueD0dYG1Zn7Ubs0TjVLVzXa58y7wRacVBDZDrit-V4"
         sh = gc.open_by_url(sheet_url)
         wks = sh.get_worksheet(0)
+        user_query = handler_input.request_envelope.request.intent.slots["UserQuery"].value
 
-        # attr = handler_input.attributes_manager.session_attributes
-        # illness_name = attr.get("IllnessName")
-        illness_name = handler_input.request_envelope.request.intent.slots["IllnessName"].value
+        user_keywords = [word.lower() for word in TextBlob(user_query).words]
+        speak_output = str(user_keywords[0])
 
-        cell = wks.find(illness_name)  # Find the cell with the illness name
-        if cell:
-            row = cell.row
-            medicine = wks.cell(row, 2).value  # Get the corresponding medicine from column B
-            speak_output = f"The medicine for {illness_name} is {medicine}"
-        else:
-            speak_output = f"{illness_name} not found in the spreadsheet."
+        # # Initialize variables to store the best match and its score
+        # best_match = None
+        # best_score = 0
+        # row_index = 0
+        # index_count = 0
+
+        # # Iterate through the cells in the specific column (e.g., column A) to find a matching keyword
+        # for index, product_description_cell in enumerate(wks.col_values(3)):  # Column A is 1-based
+        #     index_count += 1
+        #     description_keywords = [word.lower() for word in TextBlob(product_description_cell).words]
+        #     common_keywords = set(user_keywords) & set(description_keywords)
+        #     match_score = len(common_keywords)
+        #     if match_score > best_score:
+        #         best_match = product_description_cell
+        #         best_score = match_score
+        #         row_index = index + 1
+
+        # if row_index:
+        #     product = wks.cell(row_index, 1).value
+        #     speak_output = f"The product you might be looking for is {product}."
+        # else:
+        #     speak_output = f"I cannot find the product for {user_query} in the spreadsheet."
 
         return (
             handler_input.response_builder
             .speak(speak_output)
-            # .ask("add a reprompt if you want to keep the session open for the user to respond")
+            .ask(speak_output)
             .response
         )
 
