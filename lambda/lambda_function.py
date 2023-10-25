@@ -41,12 +41,12 @@ class LaunchRequestHandler(AbstractRequestHandler):
         )
 
 
-class GetMedicineByIllnessIntentHandler(AbstractRequestHandler):
-    """Handler for GetMedicineByIllnessIntent."""
+class GetUserQueryIntentHandler(AbstractRequestHandler):
+    """Handler for GetGetUserQueryIntent."""
 
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
-        return ask_utils.is_intent_name("GetMedicineByIllnessIntent")(handler_input)
+        return ask_utils.is_intent_name("GetUserQueryIntent")(handler_input)
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
@@ -243,8 +243,8 @@ class CatchAllExceptionHandler(AbstractExceptionHandler):
 sb = SkillBuilder()
 
 sb.add_request_handler(LaunchRequestHandler())
-# Add the GetMedicineByIllnessIntentHandler to your skill builder
-sb.add_request_handler(GetMedicineByIllnessIntentHandler())
+# Add the GetUserQueryIntentHandler to your skill builder
+sb.add_request_handler(GetUserQueryIntentHandler())
 sb.add_request_handler(HelloWorldIntentHandler())
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
